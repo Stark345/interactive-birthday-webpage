@@ -1,0 +1,23 @@
+# ==========================================
+# Birthday Webpage - Safe Gitignore Rules
+# ==========================================
+
+# 1. Private Personal Videos (Never commit personal media)
+assets/videos/*.mp4
+assets/videos/*.mov
+assets/videos/*.webm
+assets/videos/*.avi
+*.mp4
+*.mov
+*.avi
+
+# 2. Operating System Files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# 3. Development / Local Environment
+node_modules/
+.env
+.env.local
+*.log

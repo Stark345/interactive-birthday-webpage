@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Interactive Birthday Celebration Portal 🎂✨</title>
+  <meta name="theme-color" content="#fce4ec">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>👑</text></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Outfit:wght@300;400;500;600;700;800;900&family=Righteous&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- 🌸 CANVAS: Drifting Petals & Particles -->
+  <canvas id="particle-canvas" aria-hidden="true"></canvas>
+  <!-- 🎆 CANVAS: Real Fireworks -->
+  <canvas id="fireworks-canvas" aria-hidden="true" class="hidden"></canvas>
+
+  <!-- 🎵 FLOATING MUSIC PLAYER -->
+  <aside class="music-player" id="music-player" aria-label="Music Player">
+    <div class="music-disc" id="music-disc" aria-hidden="true"><span>🎵</span></div>
+    <button class="music-play-btn blinking-play-btn" id="music-play-btn" aria-label="Play or pause music">
+      <span id="music-icon">▶</span>
+    </button>
+    <audio id="bg-audio" loop preload="metadata">
+      <source src="assets/audio/song.mp3" type="audio/mpeg">
+    </audio>
+    <!-- Gently bouncing pointing hand below play button (Golden Cue) -->
+    <div class="music-hand-pointer" id="music-hand-pointer" aria-hidden="true">
+      <span class="pointing-finger">
+        <svg width="34" height="42" viewBox="0 0 24 30" fill="none" xmlns="http://www.w3.org/2000/svg" class="gold-hand-svg" aria-hidden="true">
+          <path d="M12 2C10.9 2 10 2.9 10 4V13.8L9.1 12.9C8.6 12.4 7.9 12.1 7.2 12.1C6.5 12.1 5.8 12.4 5.3 12.9L4.5 13.8L10.8 20.1C11.6 20.9 12.7 21.4 13.8 21.4H18.2C20.1 21.4 21.6 19.9 21.6 18V9.8C21.6 8.7 20.7 7.8 19.6 7.8C19.3 7.8 19 7.9 18.7 8C18.3 7 17.3 6.3 16.2 6.3C15.8 6.3 15.4 6.4 15.1 6.6C14.7 5.6 13.7 4.9 12.5 4.9H12V4C12 2.9 11.1 2 12 2Z" fill="url(#cueGoldGrad)" stroke="#ffffff" stroke-width="0.85" />
+          <defs>
+            <linearGradient id="cueGoldGrad" x1="4" y1="2" x2="22" y2="22" gradientUnits="userSpaceOnUse">
+              <stop stop-color="#fff9dc" />
+              <stop offset="0.45" stop-color="#fde047" />
+              <stop offset="0.85" stop-color="#f59e0b" />
+              <stop offset="1" stop-color="#d97706" />
+            </linearGradient>
+          </defs>
+        </svg>
+      </span>
+    </div>
+  </aside>
+
+  <!-- 📄 PAGE STACK CONTAINER -->
+  <div class="page-container" id="page-container">
+
+    <!-- PAGE 0: LANDING / COUNTDOWN -->
+    <section class="page active" id="page-0" data-page="0">
+      <div class="glass-page-bg"></div>
+      <div class="theme-bg" id="theme-bg-landing"></div>
+      <div class="page-inner">
+        <div class="pill-tag">
+          <span class="live-dot"></span>
+          Earth-616 · IST Countdown
+        </div>
+        <h1 class="page-heading" id="landing-heading">Advance Happy Birthday to our <span class="landing-highlight">Birthday Star! 🌟</span></h1>
+        <div class="clock-row" id="clock-row">
+          <div class="clock-block"><span class="clock-num" id="days">00</span><span class="clock-lbl">DAYS</span></div>
+          <span class="clock-sep">:</span>
+          <div class="clock-block"><span class="clock-num" id="hours">00</span><span class="clock-lbl">HRS</span></div>
+          <span class="clock-sep">:</span>
+          <div class="clock-block"><span class="clock-num" id="minutes">00</span><span class="clock-lbl">MINS</span></div>
+          <span class="clock-sep">:</span>
+          <div class="clock-block"><span class="clock-num" id="seconds">00</span><span class="clock-lbl">SECS</span></div>
+        </div>
+        <div class="bday-banner hidden" id="bday-banner">
+          <div class="bday-emoji">🎉🎂👑</div>
+          <h2 class="bday-banner-title">Happy Birthday, Bestie! 🎉</h2>
+          <p class="bday-banner-sub">The Celebration Portal is open. Enter now!</p>
+        </div>
+        <button class="cta-btn primary-btn zoom-btn locked-btn" id="enter-btn" disabled style="display:none;">
+          🔒 Unlocks on September 19th
+        </button>
+        
+        <!-- 💝 Pull & Release Interactive Heart Cord (Eye-catching & Larger) -->
+        <div class="heart-pull-container hidden" id="heart-pull-container">
+          <div class="pull-string-anchor">
+            <div class="pull-string" id="pull-string"></div>
+            <div class="pull-heart" id="pull-heart" title="Pull the heart down to enter!">
+              <span class="heart-glyph">💖</span>
+              <span class="pull-ring-wave"></span>
+              <span class="pull-glow"></span>
+            </div>
+          </div>
+          <div class="pull-down-indicator" id="pull-down-indicator">
+            <span class="bouncing-arrow">↓</span>
+          </div>
+          <div class="pull-instruction" id="pull-instruction">
+            <span>Pull the heart down to enter 💖</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 1: LAUNCH & OPENING TITLE -->
+    <section class="page" id="page-1" data-page="1">
+      <div class="glass-page-bg"></div>
+      <div class="theme-bg" id="theme-bg-title"></div>
+      <div class="page-inner">
+        <div class="glass-card reveal-card tilt-card">
+          <div class="dimension-tag">🌌 DIMENSION 09-11</div>
+          <h2 class="hero-display-title">Welcome to the<br><span class="pink-grad">Multiverse Portal</span> ✨</h2>
+          <div class="pink-divider"></div>
+          <p class="hero-tagline">"One girl. Six personalities. Unlimited madness."</p>
+          <p class="hero-sub">You are about to travel through six wonderful dimensions of our dearest best friend. Each universe reveals a special memory and superpower that makes them unforgettable.</p>
+          <button class="cta-btn primary-btn zoom-btn" id="start-journey-btn" onclick="goTo(2)">
+            Start the Journey 🚀
+            <span class="btn-arrow">→</span>
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 2: UNIVERSE 01 - THE JOYFUL SOUL -->
+    <section class="page universe-page" id="page-2" data-page="2">
+      <div class="glass-page-bg"></div>
+      <div class="theme-bg" id="theme-bg-0"></div>
+      <div class="universe-layout">
+        <div class="universe-media-panel">
+          <div class="video-shell tilt-card">
+            <div class="universe-num-badge">01 / 06</div>
+            <video class="universe-vid" id="vid-0" playsinline preload="metadata" poster="assets/images/universe-0.webp">
+              <source src="assets/videos/universe-1.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="standalone-play-wrap">
+            <button class="vid-ctrl vid-play-btn standalone-play-btn" id="vid-btn-0" onclick="toggleVid(0)" aria-label="Play">▶</button>
+          </div>
+        </div>
+        <div class="universe-text-panel glass-card universe-glass-panel">
+          <div class="universe-tag-chip donald-chip">UNIVERSE 01</div>
+          <h2 class="universe-name">Universe 01:<br>The Joyful Soul ✨</h2>
+          <p class="universe-quote">"Spreading boundless laughter and sunshine wherever they go."</p>
+          <div class="badge-row">
+            <span class="u-badge">⭐ Infectious Smile</span>
+            <span class="u-badge">💛 Pure Positivity</span>
+            <span class="u-badge">✨ Golden Energy</span>
+          </div>
+          <div class="universe-nav-row">
+            <button class="cta-btn ghost-btn zoom-btn" onclick="goTo(1)">← Back</button>
+            <button class="cta-btn primary-btn zoom-btn universe-next-btn hidden" id="next-universe-btn-0" onclick="goTo(3)">
+              Next Universe →
+              <span class="btn-arrow glow-arrow">✨</span>
+            </button>
+          </div>
+          <div class="page-arrow-hint inline-hint hidden" id="next-universe-hint-0">
+            <span class="arrow-label">Click to unlock Universe 02!</span>
+            <span class="arrow-right">→</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 3: UNIVERSE 02 - THE MASTER CHEF -->
+    <section class="page universe-page" id="page-3" data-page="3">
+      <div class="glass-page-bg"></div>
+      <div class="theme-bg" id="theme-bg-1"></div>
+      <div class="universe-layout">
+        <div class="universe-media-panel">
+          <div class="video-shell tilt-card chef-shell">
+            <div class="universe-num-badge">02 / 06</div>
+            <video class="universe-vid" id="vid-1" playsinline preload="metadata" poster="assets/images/universe-1.webp">
+              <source src="assets/videos/universe-2.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="standalone-play-wrap">
+            <button class="vid-ctrl vid-play-btn standalone-play-btn" id="vid-btn-1" onclick="toggleVid(1)" aria-label="Play">▶</button>
+          </div>
+        </div>
+        <div class="universe-text-panel glass-card universe-glass-panel">
+          <div class="universe-tag-chip chef-chip">UNIVERSE 02</div>
+          <h2 class="universe-name">Universe 02:<br>Master Chef 👩‍🍳</h2>
+          <p class="universe-quote">"Cooking with confidence… results subject to verification."</p>
+          <div class="badge-row">
+            <span class="u-badge">🍳 Masterchef Dreams</span>
+            <span class="u-badge">🔥 Smoke Alarm BFF</span>
+            <span class="u-badge">🧂 Secret Ingredients</span>
+          </div>
+          <div class="universe-nav-row">
+            <button class="cta-btn ghost-btn zoom-btn" onclick="goTo(2)">← Back</button>
+            <button class="cta-btn primary-btn zoom-btn universe-next-btn hidden" id="next-universe-btn-1" onclick="goTo(4)">
+              Next Universe → <span class="btn-arrow">✨</span>
+            </button>
+          </div>
+          <div class="page-arrow-hint inline-hint hidden" id="next-universe-hint-1">
+            <span class="arrow-label">Click to unlock Universe 03!</span>
+            <span class="arrow-right">→</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 4: UNIVERSE 03 - THE FOODIE -->
+    <section class="page universe-page" id="page-4" data-page="4">
+      <div class="glass-page-bg"></div>
+      <div class="theme-bg" id="theme-bg-2"></div>
+      <div class="universe-layout">
+        <div class="universe-media-panel">
+          <div class="video-shell tilt-card foodie-shell">
+            <div class="universe-num-badge">03 / 06</div>
+            <video class="universe-vid" id="vid-2" playsinline preload="metadata" poster="assets/images/universe-2.webp">
+              <source src="assets/videos/universe-3.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="standalone-play-wrap">
+            <button class="vid-ctrl vid-play-btn standalone-play-btn" id="vid-btn-2" onclick="toggleVid(2)" aria-label="Play">▶</button>
+          </div>
+        </div>
+        <div class="universe-text-panel glass-card universe-glass-panel">
+          <div class="universe-tag-chip foodie-chip">UNIVERSE 03</div>
+          <h2 class="universe-name">Universe 03:<br>The Foodie 🍔</h2>
+          <p class="universe-quote">"Food first. Everything else can wait."</p>
+          <div class="badge-row">
+            <span class="u-badge">🍟 Sothuku Sethava</span>
+            <span class="u-badge">🍕 Midnight Snacker</span>
+            <span class="u-badge">🧋 100% Food Fuelled</span>
+          </div>
+          <div class="universe-nav-row">
+            <button class="cta-btn ghost-btn zoom-btn" onclick="goTo(3)">← Back</button>
+            <button class="cta-btn primary-btn zoom-btn universe-next-btn hidden" id="next-universe-btn-2" onclick="goTo(5)">
+              Next Universe → <span class="btn-arrow">✨</span>
+            </button>
+          </div>
+          <div class="page-arrow-hint inline-hint hidden" id="next-universe-hint-2">
+            <span class="arrow-label">Click to unlock Universe 04!</span>
+            <span class="arrow-right">→</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 5: UNIVERSE 04 - ISLAND WANDERER -->
+    <section class="page universe-page" id="page-5" data-page="5">
+      <div class="glass-page-bg"></div>
+      <div class="theme-bg" id="theme-bg-3"></div>
+      <div class="universe-layout">
+        <div class="universe-media-panel">
+          <div class="video-shell tilt-card moana-shell">
+            <div class="universe-num-badge">04 / 06</div>
+            <video class="universe-vid" id="vid-3" playsinline preload="metadata" poster="assets/images/universe-3.webp">
+              <source src="assets/videos/universe-4.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="standalone-play-wrap">
+            <button class="vid-ctrl vid-play-btn standalone-play-btn" id="vid-btn-3" onclick="toggleVid(3)" aria-label="Play">▶</button>
+          </div>
+        </div>
+        <div class="universe-text-panel glass-card universe-glass-panel">
+          <div class="universe-tag-chip moana-chip">UNIVERSE 04</div>
+          <h2 class="universe-name">Universe 04:<br>Island Wanderer 🌊</h2>
+          <p class="universe-quote">"The ocean may not call her—but adventure definitely does."</p>
+          <div class="badge-row">
+            <span class="u-badge">🌴 Wanderlust Queen</span>
+            <span class="u-badge">🕶️ Confident Strides</span>
+            <span class="u-badge">🐒 Mental Korangu</span>
+          </div>
+          <div class="universe-nav-row">
+            <button class="cta-btn ghost-btn zoom-btn" onclick="goTo(4)">← Back</button>
+            <button class="cta-btn primary-btn zoom-btn universe-next-btn hidden" id="next-universe-btn-3" onclick="goTo(6)">
+              Next Universe → <span class="btn-arrow">✨</span>
+            </button>
+          </div>
+          <div class="page-arrow-hint inline-hint hidden" id="next-universe-hint-3">
+            <span class="arrow-label">Click to unlock Universe 05!</span>
+            <span class="arrow-right">→</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 6: UNIVERSE 05 - THE DANCE STAR -->
+    <section class="page universe-page" id="page-6" data-page="6">
+      <div class="glass-page-bg"></div>
+      <div class="theme-bg" id="theme-bg-4"></div>
+      <div class="universe-layout">
+        <div class="universe-media-panel">
+          <div class="video-shell tilt-card dancer-shell">
+            <div class="universe-num-badge">05 / 06</div>
+            <video class="universe-vid" id="vid-4" playsinline preload="metadata" poster="assets/images/universe-4.webp">
+              <source src="assets/videos/universe-5.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="standalone-play-wrap">
+            <button class="vid-ctrl vid-play-btn standalone-play-btn" id="vid-btn-4" onclick="toggleVid(4)" aria-label="Play">▶</button>
+          </div>
+        </div>
+        <div class="universe-text-panel glass-card universe-glass-panel">
+          <div class="universe-tag-chip dancer-chip">UNIVERSE 05</div>
+          <h2 class="universe-name">Universe 05:<br>The Dance Star 💃</h2>
+          <p class="universe-quote">"Paatuku aada sonna, ava pattuku aaduva🤣."</p>
+          <div class="badge-row">
+            <span class="u-badge">🎶 Stage Lights</span>
+            <span class="u-badge">💃 Signature Moves</span>
+            <span class="u-badge">✨ 0% Stage Fright</span>
+          </div>
+          <div class="universe-nav-row">
+            <button class="cta-btn ghost-btn zoom-btn" onclick="goTo(5)">← Back</button>
+            <button class="cta-btn primary-btn zoom-btn universe-next-btn hidden" id="next-universe-btn-4" onclick="goTo(7)">
+              Final Universe → <span class="btn-arrow">👑</span>
+            </button>
+          </div>
+          <div class="page-arrow-hint inline-hint hidden" id="next-universe-hint-4">
+            <span class="arrow-label">One more universe left!</span>
+            <span class="arrow-right">→</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 7: UNIVERSE 06 - THE MADNESS QUEEN -->
+    <section class="page universe-page queen-page" id="page-7" data-page="7">
+      <div class="glass-page-bg"></div>
+      <div class="theme-bg" id="theme-bg-5"></div>
+      <div class="universe-layout">
+        <div class="universe-media-panel">
+          <div class="video-shell tilt-card queen-shell">
+            <div class="universe-num-badge queen-badge-num">06 / 06</div>
+            <video class="universe-vid" id="vid-5" playsinline preload="metadata" poster="assets/images/universe-5.webp">
+              <source src="assets/videos/universe-6.mp4" type="video/mp4">
+            </video>
+          </div>
+          <div class="standalone-play-wrap">
+            <button class="vid-ctrl vid-play-btn standalone-play-btn" id="vid-btn-5" onclick="toggleVid(5)" aria-label="Play">▶</button>
+          </div>
+        </div>
+        <div class="universe-text-panel glass-card universe-glass-panel">
+          <div class="universe-tag-chip queen-chip">UNIVERSE 06 — The Birthday Star </div>
+          <h2 class="universe-name queen-title">Universe 06:<br>Birthday Royalty 👑</h2>
+          <p class="universe-quote">"Six personalities. Zero predictability. One legendary human."</p>
+          <div class="badge-row">
+            <span class="u-badge">👑 Ultimate Bestie</span>
+            <span class="u-badge">💥 Chaotic Royalty</span>
+            <span class="u-badge">💙 Irreplaceable</span>
+          </div>
+          <div class="universe-nav-row">
+            <button class="cta-btn ghost-btn zoom-btn" onclick="goTo(6)">← Back</button>
+            <button class="cta-btn gold-btn zoom-btn universe-next-btn hidden" id="next-universe-btn-5" onclick="goTo(8)">
+              See Our Memories 📸 <span class="btn-arrow">✨</span>
+            </button>
+          </div>
+          <div class="page-arrow-hint inline-hint hidden" id="next-universe-hint-5">
+            <span class="arrow-label">Explore your chaos together!</span>
+            <span class="arrow-right">→</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 8: SCRAPBOOK MEMORIES -->
+    <section class="page" id="page-8" data-page="8">
+      <div class="glass-page-bg"></div>
+      <div class="theme-bg" id="theme-bg-gallery"></div>
+      <div class="page-inner gallery-inner">
+        <!-- Compact Responsive Gallery Layout (2 Panels: Blooming Tree on left, Photos on right) -->
+        <div class="compact-gallery-layout">
+          <!-- Left Panel: Blooming Tree Card -->
+          <div class="blooming-tree-card compact-tree-card glass-card" id="blooming-tree-card" onclick="onTreeClick()">
+            <div class="tree-canvas-wrap">
+              <canvas id="tree-canvas" width="340" height="380"></canvas>
+              <!-- Looping Tutorial Animation: Hand/finger cursor tapping the tree -->
+              <div class="tree-tap-tutorial" id="tree-tap-tutorial" aria-hidden="true">
+                <div class="tree-tutorial-pointer">
+                  <span class="tree-tutorial-finger">👆</span>
+                  <span class="tree-tutorial-ripple"></span>
+                </div>
+              </div>
+            </div>
+            <div class="tree-tap-hint">
+              <span class="tree-hint-pulse" id="tree-hint-text">💝 Tap tree to bloom memories!</span>
+            </div>
+          </div>
+
+          <!-- Right Panel: Heading + Photos -->
+          <div class="photos-panel glass-card" id="photos-panel">
+            <div class="compact-gallery-header">
+              <span class="section-tag">SCRAPBOOK VAULT</span>
+              <h2 class="section-title">Our Chaos, Our Memories 📸</h2>
+              <p class="section-sub" id="gallery-sub-text">Tap the blooming tree to reveal memories! (Tap photo to zoom)</p>
+            </div>
+            <div class="compact-polaroid-grid" id="compact-polaroid-grid">
+              <!-- 8 slots progressively revealed -->
+            </div>
+          </div>
+        </div>
+        <div class="page-nav-row">
+          <button class="cta-btn ghost-btn zoom-btn" onclick="goTo(7)">← Universes</button>
+          <button class="cta-btn primary-btn zoom-btn magic-nav-btn" onclick="goTo(9)">
+            Reveal the Magic ✨
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Lightbox Dialog -->
+    <dialog id="lightbox" class="lightbox-dialog">
+      <div class="lightbox-inner">
+        <button class="lb-close" onclick="document.getElementById('lightbox').close()">✕</button>
+        <div class="lb-media" id="lb-media"></div>
+        <div class="lb-footer">
+          <p class="lb-caption" id="lb-caption"></p>
+          <div class="lb-nav">
+            <button class="lb-nav-btn" id="lb-prev">← Prev</button>
+            <span id="lb-counter">1/8</span>
+            <button class="lb-nav-btn" id="lb-next">Next →</button>
+          </div>
+        </div>
+      </div>
+    </dialog>
+
+    <!-- PAGE 9: THE MAGIC WISH HAT 🎩✨ -->
+    <section class="page" id="page-9" data-page="9">
+      <div class="glass-page-bg"></div>
+      <div class="theme-bg" id="theme-bg-magic"></div>
+      <div class="page-inner magic-hat-inner">
+        <!-- Single Clean Centered Top Header: Let’s Do Some Magic! ✨ -->
+        <div class="section-header glass-card section-glass-header magic-hat-header">
+          <span class="section-tag">MAGIC MOMENT</span>
+          <h2 class="section-title pink-grad">Let’s Do Some Magic! ✨</h2>
+          <p class="section-sub">Grab & pull the enchanted ribbon up to reveal secret wishes!</p>
+          <div class="score-pill">Wishes Unlocked: <strong id="magic-score">0</strong> / 6</div>
+          <!-- Hidden fallback for any legacy score reference -->
+          <span id="pop-score" style="display:none">0</span>
+        </div>
+
+        <!-- Side-by-Side 2 Panels (Like Memory Bloom Tree) -->
+        <div class="compact-magic-layout" id="compact-magic-layout">
+          <!-- Left Panel: Compact Magic Hat & Ribbon Pull Interaction with Tutorial -->
+          <div class="magic-hat-panel glass-card" id="magic-hat-panel">
+            <div class="magic-hat-interactive-zone" id="magic-hat-interactive-zone">
+              <!-- Tutorial Overlay -->
+              <div class="magic-hat-tutorial" id="magic-hat-tutorial">
+                <div class="tutorial-text-badge">Grab the ribbon and pull it up! 🎀⬆️</div>
+                <div class="tutorial-hand-anim" id="tutorial-hand-anim" aria-hidden="true">
+                  <span class="tutorial-hand-icon">👇</span>
+                </div>
+              </div>
+
+              <!-- Ribbon Pull Track & Draggable Ribbon -->
+              <div class="ribbon-pull-track" id="ribbon-pull-track">
+                <!-- Colourful Ribbon Body -->
+                <div class="ribbon-body" id="ribbon-body">
+                  <div class="ribbon-texture"></div>
+                  <div class="ribbon-stars">✨ ✦ 🌟 ✦ ✨</div>
+                </div>
+
+                <!-- Pulsing Draggable Ribbon Tip Handle -->
+                <div class="ribbon-tip-handle" id="ribbon-tip-handle" tabindex="0" role="slider" aria-label="Grab ribbon and pull up" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0">
+                  <div class="ribbon-tip-pulse" id="ribbon-tip-pulse">
+                    <span class="ribbon-tip-icon">🎀</span>
+                    <span class="ribbon-pull-arrow">⬆️</span>
+                  </div>
+                  <div class="ribbon-tip-aura"></div>
+                </div>
+              </div>
+
+              <!-- Rising Mini Cake (nestled inside hat, rises after final wish) -->
+              <div class="mini-magic-cake-wrap hidden" id="mini-magic-cake-wrap">
+                <div class="mini-magic-cake" id="mini-magic-cake">
+                  <div class="mini-cake-aura"></div>
+                  <div class="mini-cake-candle">
+                    <span class="mini-flame">🔥</span>
+                  </div>
+                  <div class="mini-cake-body">🎂</div>
+                  <div class="mini-cake-sparkles">✨ 🌟 ✨</div>
+                </div>
+              </div>
+
+              <!-- Magician Top Hat -->
+              <div class="magician-hat-wrap" id="magician-hat-wrap">
+                <!-- Magical particle layer -->
+                <div class="hat-particles-layer" id="hat-particles-layer"></div>
+
+                <div class="magician-hat" id="magician-hat">
+                  <div class="hat-opening">
+                    <div class="hat-opening-void"></div>
+                    <div class="hat-opening-glow"></div>
+                  </div>
+                  <div class="hat-crown">
+                    <div class="hat-crown-shading"></div>
+                    <div class="hat-band">
+                      <span class="hat-buckle">👑</span>
+                    </div>
+                  </div>
+                  <div class="hat-brim">
+                    <div class="hat-brim-curve"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right Panel: Wish Reveal Area (Single Playful Popup in Order) -->
+          <div class="magic-wishes-panel glass-card" id="magic-wishes-panel">
+            <div class="wishes-panel-header">
+              <span class="wishes-panel-tag">ENCHANTED WISH</span>
+              <h3 class="wishes-panel-title">The Magic Birthday Secret ✨</h3>
+            </div>
+
+            <!-- Single Playful Popup Reveal Stage (Never a list) -->
+            <div class="wish-reveal-stage" id="wish-reveal-stage">
+              <!-- Initial Placeholder before first ribbon pull -->
+              <div class="wish-placeholder-card" id="wish-placeholder-card">
+                <div class="placeholder-magic-icon">📜✨</div>
+                <h4 class="placeholder-title">A Secret Wish Awaits</h4>
+                <p class="placeholder-desc">Grab & pull the enchanted ribbon up to reveal Wish 1! 🎀⬆️</p>
+                <div class="placeholder-hint-badge">Pull the ribbon on the left! ✨</div>
+              </div>
+
+              <!-- Playful Popup Card: Displays only the next wish in order -->
+              <div class="wish-popup-card hidden" id="wish-popup-card">
+                <div class="wish-popup-sparkles">✨ 🌟 ✨</div>
+                <span class="wish-popup-badge" id="wish-popup-badge">Wish 1 of 6 ✨</span>
+                <div class="wish-popup-icon" id="wish-popup-icon">🌈</div>
+                <p class="wish-popup-text" id="wish-popup-text">Stay wonderfully weird and uniquely you, always!</p>
+                <!-- Mini Progress Dots: Only indicates progress, never shows wishes as a list -->
+                <div class="wish-popup-dots" id="wish-popup-dots">
+                  <span class="wish-mini-dot active" data-step="0">1</span>
+                  <span class="wish-mini-dot" data-step="1">2</span>
+                  <span class="wish-mini-dot" data-step="2">3</span>
+                  <span class="wish-mini-dot" data-step="3">4</span>
+                  <span class="wish-mini-dot" data-step="4">5</span>
+                  <span class="wish-mini-dot" data-step="5">6</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="page-nav-row">
+          <button class="cta-btn ghost-btn zoom-btn" onclick="goTo(8)">← Memories</button>
+          <button class="cta-btn gold-btn zoom-btn hidden" id="cake-unlock-btn" onclick="goTo(10)">
+            Make a Wish 🎂
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 10: CAKE CUTTING 🎂 -->
+    <section class="page" id="page-10" data-page="10">
+      <div class="glass-page-bg"></div>
+      <div class="theme-bg" id="theme-bg-cake"></div>
+      <div class="page-inner cake-page-inner">
+        <div class="section-header glass-card section-glass-header">
+          <span class="section-tag">SPECIAL MOMENT</span>
+          <h2 class="section-title cake-main-title" id="cake-title"><span class="cake-text-glow">Let's Cut the Cake!</span> <span class="natural-emoji">🎂</span></h2>
+          <p class="section-sub" id="cake-subtitle">👆 Tap the cake to slice & make a wish!</p>
+        </div>
+
+        <div class="cake-scene" id="cake-scene" onclick="onCakeClick()" role="button" tabindex="0" aria-label="Tap to bake and cut the cake">
+          <div class="cake-ready-flash" id="cake-ready-flash"></div>
+          <div class="candle-wrap hidden" id="candle-wrap">
+              <div class="flame-wrap" id="flame-wrap">
+                <div class="flame-outer"></div>
+                <div class="flame-inner"></div>
+              </div>
+              <div class="candle-body"></div>
+          </div>
+          <div class="cake-layer cake-top" id="cake-tier-top">
+            <div class="frosting-top"></div>
+            <div class="cake-deco">🍓 🌸 🍓</div>
+          </div>
+          <div class="cake-layer cake-mid" id="cake-tier-mid">
+            <div class="frosting-mid"></div>
+          </div>
+          <div class="cake-layer cake-bot" id="cake-tier-bot">
+            <div class="frosting-bot"></div>
+          </div>
+          <div class="cake-plate"></div>
+          <div class="knife-anim hidden" id="knife-anim">🔪</div>
+          <div class="cut-line hidden" id="cut-line"></div>
+        </div>
+
+        <div class="cake-reveal hidden" id="cake-reveal">
+          <div class="wish-pill">✨ Wish made successfully! 💝</div>
+          <button class="cta-btn gold-btn zoom-btn" onclick="goTo(11)">
+            See the Grand Finale! 👑 →
+          </button>
+        </div>
+
+        <div class="page-nav-row" style="margin-top:20px;">
+          <button class="cta-btn ghost-btn zoom-btn" onclick="goTo(9)">← Magic ✨</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- PAGE 11: GRAND FINALE 👑 -->
+    <section class="page" id="page-11" data-page="11">
+      <div class="glass-page-bg"></div>
+      <div class="theme-bg" id="theme-bg-finale"></div>
+      <div class="page-inner finale-inner">
+        <!-- 🏹 Interactive Crossbow, Arrow, Target Heart & Closed Envelope Stage -->
+        <div class="bow-arrow-stage" id="bow-arrow-stage">
+          <div class="archery-arena" id="archery-arena">
+            <!-- Bow & Drag Arrow Rig -->
+            <div class="bow-rig-container" id="bow-rig-container" title="Drag arrow backwards and release!">
+              <div class="bow-frame" id="bow-frame">
+                <svg class="bow-svg" id="bow-svg" viewBox="0 0 80 160">
+                  <path class="bow-limb" d="M30,10 Q65,80 30,150" fill="none" stroke="#d97706" stroke-width="6" stroke-linecap="round"/>
+                  <path class="bow-string-top" id="bow-string-top" d="M30,10 L30,80" stroke="#fef08a" stroke-width="2"/>
+                  <path class="bow-string-bot" id="bow-string-bot" d="M30,150 L30,80" stroke="#fef08a" stroke-width="2"/>
+                </svg>
+                <div class="notched-arrow" id="notched-arrow">
+                  <span class="arrow-feather">🪶</span>
+                  <span class="arrow-wood"></span>
+                  <span class="arrow-heart-head">💘</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Aim Trajectory Line -->
+            <div class="aim-trajectory" id="aim-trajectory"></div>
+
+            <!-- Closed Royal Envelope with Target Heart Seal -->
+            <div class="envelope-target-station" id="envelope-target-station">
+              <div class="royal-closed-envelope" id="royal-closed-envelope">
+                <div class="envelope-flap-fold" id="envelope-flap-fold">
+                  <div class="envelope-flap-shape"></div>
+                </div>
+                <!-- Target Heart Seal on Envelope -->
+                <div class="target-heart-station" id="target-heart-station">
+                  <div class="target-heart-glow" id="target-heart-glow">
+                    <span class="heart-pulse-icon">💖</span>
+                    <span class="heart-lock-seal">Sealed with Love</span>
+                  </div>
+                  <div class="target-prick-impact hidden" id="target-prick-impact">💥💘</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Playful Drag Instruction -->
+            <div class="bow-instruction-row" id="bow-instruction-row">
+              <span class="drag-hand-icon">👈</span>
+              <span class="drag-hint-text">Pull back the arrow & release to shoot! 🏹💘</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 👑 Revealed Finale Stage (Photo, Crown, Message Card & 3 Buttons) -->
+        <div class="finale-revealed-stage hidden" id="finale-revealed-stage">
+          <div class="crown-float" aria-hidden="true">👑</div>
+
+          <div class="queen-frame glass-card tilt-card">
+            <img id="queen-img" src="assets/images/birthday-queen.webp" alt="Birthday Star" class="queen-img" onerror="this.style.display='none';document.getElementById('queen-fallback').style.display='flex';">
+            <div class="queen-fallback" id="queen-fallback">
+              <span style="font-size:3.5rem;">👸✨</span>
+              <span style="font-size:0.85rem;color:#f0259a;font-weight:700;">Birthday Star 👑</span>
+            </div>
+          </div>
+
+          <div class="letter-card glass-card royal-wishes-card">
+            <div class="letter-header-row">
+              <span class="letter-seal-badge">💌 A Special Birthday Wish 👑</span>
+            </div>
+            <span class="letter-quote">"</span>
+            <p class="letter-body">Happy Birthday to our brightest star! 🌟 May this new chapter bring you boundless joy, unstoppable success, and unforgettable moments of magic. Keep smiling, keep inspiring everyone around you, and may all your biggest dreams turn into reality. Here is to celebrating you today, tomorrow, and always! 🥂🎂✨</p>
+            <div class="letter-from">
+              <span class="from-line"></span>
+              <span class="from-name">— With Love & Best Wishes, <strong>Your Best Friend 💙</strong></span>
+            </div>
+          </div>
+
+          <div class="finale-actions">
+            <button class="cta-btn primary-btn zoom-btn" onclick="fireConfetti()">🎉 Fire Confetti!</button>
+            <button class="cta-btn gold-btn zoom-btn" onclick="launchFireworks()">🎆 Launch Fireworks!</button>
+            <button class="cta-btn ghost-btn zoom-btn" onclick="replayAll()">🔄 Replay Celebration Portal</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- end page-container -->
+
+  <!-- Page Progress Dots -->
+  <nav class="page-dots" id="page-dots" aria-label="Page navigation"></nav>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
